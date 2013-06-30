@@ -162,24 +162,46 @@ log_parse_level(const char *level)
 static int
 log_parse_facility(const char *facility)
 {
+#ifdef LOG_AUTH
 	if(!strcasecmp(facility, "auth")) return LOG_AUTH;
+#endif
+#ifdef LOG_AUTHPRIV
 	if(!strcasecmp(facility, "authpriv")) return LOG_AUTHPRIV;
+#endif
+#ifdef LOG_CRON
 	if(!strcasecmp(facility, "cron")) return LOG_CRON;
+#endif
+#ifdef LOG_DAEMON
 	if(!strcasecmp(facility, "daemon")) return LOG_DAEMON;
+#endif
+#ifdef LOG_FTP
 	if(!strcasecmp(facility, "ftp")) return LOG_FTP;
+#endif
+#ifdef LOG_KERN
 	if(!strcasecmp(facility, "kern")) return LOG_KERN;
+#endif
+#ifdef LOG_LPR
 	if(!strcasecmp(facility, "lpr")) return LOG_LPR;
+#endif
+#ifdef LOG_MAIL
 	if(!strcasecmp(facility, "mail")) return LOG_MAIL;
+#endif
+#ifdef LOG_NEWS
 	if(!strcasecmp(facility, "news")) return LOG_NEWS;
+#endif
 #ifdef LOG_SECURITY
 	if(!strcasecmp(facility, "security")) return LOG_SECURITY;
 #endif
+#ifdef LOG_SYSLOG
 	if(!strcasecmp(facility, "syslog")) return LOG_SYSLOG;
-	if(!strcasecmp(facility, "user")) return LOG_USER;
-	if(!strcasecmp(facility, "uucp")) return LOG_UUCP;
+#endif
 #ifdef LOG_REMOTAUTH
 	if(!strcasecmp(facility, "remoteauth")) return LOG_REMOTEAUTH;
 #endif
+#ifdef LOG_UUCP
+	if(!strcasecmp(facility, "uucp")) return LOG_UUCP;
+#endif
+	if(!strcasecmp(facility, "user")) return LOG_USER;
 	if(!strcasecmp(facility, "local0")) return LOG_LOCAL0;
 	if(!strcasecmp(facility, "local1")) return LOG_LOCAL1;
 	if(!strcasecmp(facility, "local2")) return LOG_LOCAL2;
