@@ -13,6 +13,8 @@
 ##  limitations under the License.
 ##
 
+EXTRA_DIST = PROVENANCE LICENSE-2.0
+
 noinst_LTLIBRARIES = libsupport.la
 
 libsupport_la_SOURCES = \

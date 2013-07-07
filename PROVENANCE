@@ -1,0 +1,5 @@
+Package: iniparser
+Version: 3.1
+Homepage: http://ndevilla.free.fr/iniparser/
+Tarball: http://ndevilla.free.fr/iniparser/iniparser-3.1.tar.gz
+License: MIT <https://github.com/ndevilla/iniparser/blob/master/LICENSE>
