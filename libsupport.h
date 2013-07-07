@@ -19,12 +19,14 @@
 
 # include <stdarg.h>
 # include <syslog.h>
+# include <errno.h>
 
 int config_init(int (*defaults_cb)(void));
 int config_load(const char *default_path);
 int config_set(const char *key, const char *value);
 int config_set_default(const char *key, const char *value);
 size_t config_get(const char *key, const char *defval, char *buf, size_t bufsize);
+char *config_geta(const char *key, const char *defval);
 int config_get_int(const char *key, int defval);
 int config_get_bool(const char *key, int defval);
 

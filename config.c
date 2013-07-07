@@ -152,6 +152,29 @@ config_get(const char *key, const char *defval, char *buf, size_t bufsize)
 	return r;
 }
 
+char *
+config_geta(const char *key, const char *defval)
+{
+	const char *ret;
+	char *s;
+	
+	pthread_once(&config_control, config_thread_init_);
+	pthread_rwlock_rdlock(&config_lock);
+	/* Reset errno so that errors versus NULL returns can be distinguished */
+	errno = 0;
+	ret = config_get_unlocked_(key, defval);
+	if(ret)
+	{
+		s = strdup(ret);
+	}
+	else
+	{
+		s = NULL;
+	}
+	pthread_rwlock_unlock(&config_lock);
+	return s;
+}
+
 int
 config_get_int(const char *key, int defval)
 {
