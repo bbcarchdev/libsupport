@@ -24,7 +24,7 @@ static int log_open(void);
 static int log_parse_level(const char *level);
 static int log_parse_facility(const char *facility);
 
-static int log_is_open, log_use_config, log_stderr = 0, log_level = LOG_NOTICE, log_facility = LOG_DAEMON;
+static int log_is_open, log_use_config, log_stderr = 0, log_level = LOG_NOTICE, log_facility = LOG_DAEMON, log_syslog = 1;
 const char *log_ident = "(unknown)";
 
 int
@@ -64,6 +64,15 @@ log_set_stderr(int val)
 }
 
 int
+log_set_syslog(int val)
+{
+	log_use_config = 0;
+	log_syslog = val;
+	log_reset();
+	return 0;	
+}
+
+int
 log_set_use_config(int val)
 {
 	if(log_use_config == val)
@@ -78,7 +87,7 @@ log_set_use_config(int val)
 int
 log_reset(void)
 {
-	if(log_is_open)
+	if(log_is_open && log_syslog)
 	{
 		closelog();
 	}
@@ -97,7 +106,15 @@ log_vprintf(int level, const char *fmt, va_list ap)
 	{
 		return;
 	}
-	vsyslog(level, fmt, ap);
+	if(log_syslog)
+	{
+		vsyslog(level, fmt, ap);
+	}
+	else
+	{
+		fprintf(stderr, "%s: ", log_facility);
+		vfprintf(stderr, fmt, ap);
+	}
 }
 
 void
@@ -125,6 +142,7 @@ log_open(void)
 	if(log_use_config)
 	{
 		log_stderr = config_get_bool("log:stderr", 0);
+		log_syslog = config_get_bool("log:syslog", 1);
 		config_get("log:level", "notice", buf, sizeof(buf));
 		log_level = log_parse_level(buf);
 		config_get("log:facility", "user", buf, sizeof(buf));
@@ -140,7 +158,10 @@ log_open(void)
 	{
 		logopt |= LOG_PERROR;
 	}
-	openlog(log_ident, logopt, log_facility);
+	if(log_syslog)
+	{
+		openlog(ident, logopt, log_facility);
+	}
 	log_is_open = 1;
 	return 0;
 }

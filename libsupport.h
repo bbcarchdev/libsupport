@@ -36,6 +36,7 @@ int log_reset(void);
 int log_set_level(int level);
 int log_set_ident(const char *ident);
 int log_set_facility(int facility);
+int log_set_syslog(int val);
 int log_set_stderr(int val);
 int log_set_use_config(int val);
 
