@@ -112,7 +112,7 @@ log_vprintf(int level, const char *fmt, va_list ap)
 	}
 	else
 	{
-		fprintf(stderr, "%s: ", log_facility);
+		fprintf(stderr, "%s: ", log_ident);
 		vfprintf(stderr, fmt, ap);
 	}
 }
