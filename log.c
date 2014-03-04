@@ -25,13 +25,24 @@ static int log_parse_level(const char *level);
 static int log_parse_facility(const char *facility);
 
 static int log_is_open, log_use_config, log_stderr = 0, log_level = LOG_NOTICE, log_facility = LOG_DAEMON, log_syslog = 1;
-const char *log_ident = "(unknown)";
+static char *log_ident;
 
 int
 log_set_ident(const char *ident)
 {
-	log_use_config = 0;
-	log_ident = ident;
+	char *p;
+
+	if(ident)
+	{
+		p = strdup(ident);
+		if(!p)
+		{
+			return -1;
+		}
+		free(log_ident);
+		log_ident = p;
+	}
+	log_use_config = 0;	
 	log_reset();
 	return 0;
 }
@@ -141,6 +152,7 @@ log_open(void)
 	logopt = LOG_NDELAY|LOG_PID;
 	if(log_use_config)
 	{
+		free(log_ident);
 		log_stderr = config_get_bool("log:stderr", 0);
 		log_syslog = config_get_bool("log:syslog", 1);
 		config_get("log:level", "notice", buf, sizeof(buf));
@@ -148,11 +160,23 @@ log_open(void)
 		config_get("log:facility", "user", buf, sizeof(buf));
 		log_facility = log_parse_facility(buf);
 		config_get("log:ident", "(none)", buf, sizeof(buf));
-		ident = buf;
+		ident = strdup(buf);
+		if(!ident)
+		{
+			return -1;
+		}
+		log_ident = (char *) ident;
 	}
 	else
 	{
-		ident = log_ident;
+		if(!log_ident)
+		{
+			log_ident = strdup("(none)");
+			if(!log_ident)
+			{
+				return -1;
+			}
+		}
 	}
 	if(log_stderr)
 	{
@@ -160,7 +184,7 @@ log_open(void)
 	}
 	if(log_syslog)
 	{
-		openlog(ident, logopt, log_facility);
+		openlog(log_ident, logopt, log_facility);
 	}
 	log_is_open = 1;
 	return 0;
