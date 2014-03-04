@@ -17,6 +17,8 @@
 #ifndef P_LIBSUPPORT_H_
 # define P_LIBSUPPORT_H_               1
 
+# define _BSD_SOURCE
+
 # include <stdio.h>
 # include <stdlib.h>
 # include <stdarg.h>
