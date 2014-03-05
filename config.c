@@ -139,14 +139,21 @@ config_get(const char *key, const char *defval, char *buf, size_t bufsize)
 	}
 	else
 	{
-		r = 1;
+		r = 0;
 	}	
 	if(!buf || !bufsize)
 	{
 		pthread_rwlock_unlock(&config_lock);
 		return r;
 	}
-	strncpy(buf, ret, bufsize);
+	if(ret)
+	{
+		strncpy(buf, ret, bufsize);
+	}
+	else
+	{
+		buf[0] = 0;
+	}
 	buf[bufsize - 1] = 0;
 	pthread_rwlock_unlock(&config_lock);
 	return r;
