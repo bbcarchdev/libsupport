@@ -229,6 +229,48 @@ config_get_bool(const char *key, int defval)
 	return r ? -1 : 0;
 }
 
+/* Iterate configuration values in a section, optionally only those matching
+ * a particular key name.
+ *
+ * Iteration is halted early if the supplied callback function returns
+ * non-zero.
+ *
+ * Note that the configuration is read-locked while iteration occurs:
+ * other threads can read from, but are blocked from writing to, the
+ * configuration.
+ */
+int
+config_get_all(const char *section, const char *key, int (*fn)(const char *key, const char *value))
+{
+	int c;
+	dictionary *dict;
+	size_t l;
+	int r;
+
+	l = strlen(section);
+	pthread_once(&config_control, config_thread_init_);
+	pthread_rwlock_rdlock(&config_lock);
+	dict = (config ? config : overrides);
+	r = 0;
+	for(c = 0; c < dict->n; c++)
+	{
+		if(!strncmp(dict->key[c], section, l) &&
+		   dict->key[c][l] == ':')
+		{
+			if(!key || !strcmp(&(dict->key[c][l+1]), key))
+			{
+				if(fn(dict->key[c], dict->val[c]))
+				{
+					r = -1;
+					break;
+				}
+			}
+		}
+	}
+	pthread_rwlock_unlock(&config_lock);
+	return r;
+}
+
 static void
 config_thread_init_(void)
 {
