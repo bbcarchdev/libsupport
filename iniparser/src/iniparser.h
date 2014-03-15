@@ -304,4 +304,6 @@ dictionary * iniparser_load(const char * ininame);
 /*--------------------------------------------------------------------------*/
 void iniparser_freedict(dictionary * d);
 
+void iniparser_setlogger(void (*fn)(const char *format, va_list args));
+
 #endif

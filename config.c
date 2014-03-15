@@ -22,6 +22,7 @@
 
 static void config_thread_init_(void);
 static const char *config_get_unlocked_(const char *key, const char *defval);
+static void config_logger_(const char *format, va_list args);
 
 static pthread_once_t config_control = PTHREAD_ONCE_INIT;
 static pthread_rwlock_t config_lock;
@@ -275,6 +276,7 @@ static void
 config_thread_init_(void)
 {
 	pthread_rwlock_init(&config_lock, NULL);
+	iniparser_setlogger(config_logger_);
 }
 
 static const char *
@@ -285,4 +287,10 @@ config_get_unlocked_(const char *key, const char *defval)
 		return iniparser_getstring(config, key, iniparser_getstring(defaults, key, (char *) defval));
 	}
 	return iniparser_getstring(overrides, key, iniparser_getstring(defaults, key, (char *) defval));
+}
+
+static void
+config_logger_(const char *format, va_list args)
+{
+	log_vprintf(LOG_ERR, format, args);
 }

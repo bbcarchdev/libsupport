@@ -29,6 +29,43 @@ typedef enum _line_status_ {
     LINE_VALUE
 } line_status ;
 
+static void (*logger)(const char *format, va_list args);
+
+/*-------------------------------------------------------------------------*/
+/**
+  @brief    Log an error message
+  @param    format printf(3)-style format string
+ */
+/*--------------------------------------------------------------------------*/
+static void
+iniparser_logf(const char *format, ...)
+{
+	va_list ap;
+
+	va_start(ap, format);
+	if(logger)
+	{
+		logger(format, ap);
+	}
+	else
+	{
+		fprintf(stderr, "iniparser: ");
+		vfprintf(stderr, format, ap);
+	}
+}
+
+/*-------------------------------------------------------------------------*/
+/**
+  @brief    Set the logging callback function
+  @param    fn   The logging callback
+ */
+/*--------------------------------------------------------------------------*/
+void
+iniparser_setlogger(void (*fn)(const char *format, va_list args))
+{
+	logger = fn;
+}
+
 /*-------------------------------------------------------------------------*/
 /**
   @brief    Convert a string to lowercase.
@@ -644,7 +681,7 @@ dictionary * iniparser_load(const char * ininame)
     dictionary * dict ;
 
     if ((in=fopen(ininame, "r"))==NULL) {
-        fprintf(stderr, "iniparser: cannot open %s\n", ininame);
+		iniparser_logf("cannot open %s\n", ininame);
         return NULL ;
     }
 
@@ -667,8 +704,7 @@ dictionary * iniparser_load(const char * ininame)
             continue;
         /* Safety check against buffer overflows */
         if (line[len]!='\n' && !feof(in)) {
-            fprintf(stderr,
-                    "iniparser: input line too long in %s (%d)\n",
+            iniparser_logf("input line too long in %s (%d)\n",
                     ininame,
                     lineno);
             dictionary_del(dict);
@@ -704,10 +740,10 @@ dictionary * iniparser_load(const char * ininame)
             break ;
 
             case LINE_ERROR:
-            fprintf(stderr, "iniparser: syntax error in %s (%d):\n",
+            iniparser_logf("syntax error in %s (%d):\n",
                     ininame,
                     lineno);
-            fprintf(stderr, "-> %s\n", line);
+            iniparser_logf("-> %s\n", line);
             errs++ ;
             break;
 
@@ -717,7 +753,7 @@ dictionary * iniparser_load(const char * ininame)
         memset(line, 0, ASCIILINESZ);
         last=0;
         if (errs<0) {
-            fprintf(stderr, "iniparser: memory allocation failure\n");
+            iniparser_logf("memory allocation failure\n");
             break ;
         }
     }
