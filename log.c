@@ -124,6 +124,29 @@ log_vprintf(int level, const char *fmt, va_list ap)
 	else
 	{
 		fprintf(stderr, "%s: ", log_ident);
+		switch(level)
+		{
+		case LOG_DEBUG:
+			fprintf(stderr, "[Debug] ");
+			break;
+		case LOG_INFO:
+			break;
+		case LOG_NOTICE:
+			fprintf(stderr, "Notice: ");
+			break;
+		case LOG_WARNING:
+			fprintf(stderr, "Warning: ");
+			break;
+		case LOG_ERR:
+			fprintf(stderr, "Error: ");
+			break;
+		case LOG_CRIT:
+			fprintf(stderr, "Critical: ");
+			break;
+		case LOG_EMERG:
+			fprintf(stderr, "Emergency: ");
+			break;
+		}
 		vfprintf(stderr, fmt, ap);
 	}
 }
