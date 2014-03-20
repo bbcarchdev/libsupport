@@ -249,15 +249,26 @@ config_get_all(const char *section, const char *key, int (*fn)(const char *key, 
 	size_t l;
 	int r;
 
-	l = strlen(section);
+	if(section)
+	{
+		l = strlen(section);
+	}
 	pthread_once(&config_control, config_thread_init_);
 	pthread_rwlock_rdlock(&config_lock);
 	dict = (config ? config : overrides);
 	r = 0;
 	for(c = 0; c < dict->n; c++)
 	{
-		if(!strncmp(dict->key[c], section, l) &&
-		   dict->key[c][l] == ':')
+		if(!section)
+		{
+			if(fn(dict->key[c], dict->val[c]))
+			{
+				r = -1;
+				break;
+			}
+		}
+		else if(!strncmp(dict->key[c], section, l) &&
+				dict->key[c][l] == ':')
 		{
 			if(!key || !strcmp(&(dict->key[c][l+1]), key))
 			{
