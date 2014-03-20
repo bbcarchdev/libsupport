@@ -78,6 +78,7 @@ config_load(const char *default_path)
 	pthread_once(&config_control, config_thread_init_);
 	pthread_rwlock_wrlock(&config_lock);
 	file = config_get_unlocked_("global:configFile", default_path);
+	log_printf(LOG_DEBUG, "loading configuration file '%s'\n", file);
 	config = iniparser_load(file);
 	if(!config)
 	{
