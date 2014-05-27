@@ -161,6 +161,20 @@ config_get(const char *key, const char *defval, char *buf, size_t bufsize)
 	return r;
 }
 
+/* This function is only suitable for use in non-threaded applications. It
+ * must NEVER be used in libraries which may be linked into a threaded
+ * application.
+ *
+ * The result is a pointer to the string within the config data itself,
+ * or defval if no match was found.
+ */
+const char *
+config_getptr_unlocked(const char *key, const char *defval)
+{
+	errno = 0;
+	return config_get_unlocked_(key, defval);
+}
+
 char *
 config_geta(const char *key, const char *defval)
 {
