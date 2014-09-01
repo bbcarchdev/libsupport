@@ -30,7 +30,7 @@ const char *config_getptr_unlocked(const char *key, const char *defval);
 char *config_geta(const char *key, const char *defval);
 int config_get_int(const char *key, int defval);
 int config_get_bool(const char *key, int defval);
-int config_get_all(const char *section, const char *key, int (*fn)(const char *key, const char *value));
+int config_get_all(const char *section, const char *key, int (*fn)(const char *key, const char *value, void *data), void *data);
 
 void log_vprintf(int level, const char *fmt, va_list ap);
 void log_printf(int level, const char *fmt, ...);

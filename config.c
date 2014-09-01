@@ -256,7 +256,7 @@ config_get_bool(const char *key, int defval)
  * configuration.
  */
 int
-config_get_all(const char *section, const char *key, int (*fn)(const char *key, const char *value))
+config_get_all(const char *section, const char *key, int (*fn)(const char *key, const char *value, void *data), void *data)
 {
 	int c;
 	dictionary *dict;
@@ -275,7 +275,7 @@ config_get_all(const char *section, const char *key, int (*fn)(const char *key, 
 	{
 		if(!section)
 		{
-			if(fn(dict->key[c], dict->val[c]))
+			if(fn(dict->key[c], dict->val[c], data))
 			{
 				r = -1;
 				break;
@@ -286,7 +286,7 @@ config_get_all(const char *section, const char *key, int (*fn)(const char *key, 
 		{
 			if(!key || !strcmp(&(dict->key[c][l+1]), key))
 			{
-				if(fn(dict->key[c], dict->val[c]))
+				if(fn(dict->key[c], dict->val[c], data))
 				{
 					r = -1;
 					break;
