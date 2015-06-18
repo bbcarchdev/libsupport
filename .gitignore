@@ -9,6 +9,7 @@
 *.cat
 .deps
 .libs
+.dirstamp
 aclocal.m4
 Makefile
 Makefile.in
