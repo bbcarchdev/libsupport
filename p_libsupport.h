@@ -22,10 +22,6 @@
 #ifndef P_LIBSUPPORT_H_
 # define P_LIBSUPPORT_H_               1
 
-# define _BSD_SOURCE                   1
-# define _DARWIN_C_SOURCE              1
-# define _FILE_OFFSET_BITS             64
-
 # include <stdio.h>
 # include <stdlib.h>
 # include <stdarg.h>
