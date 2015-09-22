@@ -1,3 +1,8 @@
+/* Author: Mo McRoberts <mo.mcroberts@bbc.co.uk>
+ *
+ * Copyright 2015 BBC
+ */
+
 /*
  * Copyright 2013 Mo McRoberts.
  *
@@ -17,7 +22,9 @@
 #ifndef P_LIBSUPPORT_H_
 # define P_LIBSUPPORT_H_               1
 
-# define _BSD_SOURCE
+# define _BSD_SOURCE                   1
+# define _DARWIN_C_SOURCE              1
+# define _FILE_OFFSET_BITS             64
 
 # include <stdio.h>
 # include <stdlib.h>
