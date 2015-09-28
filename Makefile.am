@@ -26,3 +26,6 @@ libsupport_la_SOURCES = \
     iniparser/src/iniparser.c
 
 libsupport_la_CPPFLAGS = @AM_CPPFLAGS@ @CPPFLAGS@ -I$(srcdir)/iniparser/src
+
+checkout:
+	@true
