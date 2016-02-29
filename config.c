@@ -257,6 +257,9 @@ config_get_bool(const char *key, int defval)
  * Note that the configuration is read-locked while iteration occurs:
  * other threads can read from, but are blocked from writing to, the
  * configuration.
+ *
+ * The result is the number of times the callback was invoked, or -1 if an
+ * error occurs (including if the callback was invoked and returned an error).
  */
 int
 config_get_all(const char *section, const char *key, int (*fn)(const char *key, const char *value, void *data), void *data)
@@ -264,7 +267,7 @@ config_get_all(const char *section, const char *key, int (*fn)(const char *key, 
 	int c;
 	dictionary *dict;
 	size_t l;
-	int r;
+	int r, n;
 
 	if(section)
 	{
@@ -273,14 +276,20 @@ config_get_all(const char *section, const char *key, int (*fn)(const char *key, 
 	pthread_once(&config_control, config_thread_init_);
 	pthread_rwlock_rdlock(&config_lock);
 	dict = (config ? config : overrides);
-	r = 0;
+	n = 0;
 	for(c = 0; c < dict->n; c++)
 	{
 		if(!section)
 		{
-			if(fn(dict->key[c], dict->val[c], data))
+			n++;
+			r = fn(dict->key[c], dict->val[c], data);
+			if(r < 0)		   
 			{
-				r = -1;
+				n = -1;
+				break;
+			}
+			else if(r)
+			{
 				break;
 			}
 		}
@@ -289,16 +298,22 @@ config_get_all(const char *section, const char *key, int (*fn)(const char *key, 
 		{
 			if(!key || !strcmp(&(dict->key[c][l+1]), key))
 			{
-				if(fn(dict->key[c], dict->val[c], data))
+				n++;
+				r = fn(dict->key[c], dict->val[c], data);
+				if(r < 0)
 				{
-					r = -1;
+					n = -1;
+					break;
+				}
+				else if(r)
+				{
 					break;
 				}
 			}
 		}
 	}
 	pthread_rwlock_unlock(&config_lock);
-	return r;
+	return n;
 }
 
 static void
