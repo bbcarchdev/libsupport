@@ -1,4 +1,7 @@
-/*
+/* Author: Mo McRoberts <mo.mcroberts@bbc.co.uk>
+ *
+ * Copyright 2014-2016 BBC
+ *
  * Copyright 2013 Mo McRoberts.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
