@@ -404,14 +404,12 @@ char ** iniparser_getseckeys(dictionary * d, char * s)
 /*--------------------------------------------------------------------------*/
 char * iniparser_getstring(dictionary * d, const char * key, char * def)
 {
-    char * lc_key ;
     char * sval ;
 
     if (d==NULL || key==NULL)
         return def ;
 
-    lc_key = strlwc(key);
-    sval = dictionary_get(d, lc_key, def);
+    sval = dictionary_get(d, key, def);
     return sval ;
 }
 
@@ -561,7 +559,7 @@ int iniparser_find_entry(
 /*--------------------------------------------------------------------------*/
 int iniparser_set(dictionary * ini, const char * entry, const char * val)
 {
-    return dictionary_set(ini, strlwc(entry), val) ;
+    return dictionary_set(ini, entry, val) ;
 }
 
 /*-------------------------------------------------------------------------*/
@@ -576,7 +574,7 @@ int iniparser_set(dictionary * ini, const char * entry, const char * val)
 /*--------------------------------------------------------------------------*/
 void iniparser_unset(dictionary * ini, const char * entry)
 {
-    dictionary_unset(ini, strlwc(entry));
+    dictionary_unset(ini, entry);
 }
 
 /*-------------------------------------------------------------------------*/
@@ -613,14 +611,13 @@ static line_status iniparser_line(
         /* Section name */
         sscanf(line, "[%[^]]", section);
         strcpy(section, strstrip(section));
-        strcpy(section, strlwc(section));
+        strcpy(section, section);
         sta = LINE_SECTION ;
     } else if (sscanf (line, "%[^=] = \"%[^\"]\"", key, value) == 2
            ||  sscanf (line, "%[^=] = '%[^\']'",   key, value) == 2
            ||  sscanf (line, "%[^=] = %[^;#]",     key, value) == 2) {
         /* Usual key=value, with or without comments */
         strcpy(key, strstrip(key));
-        strcpy(key, strlwc(key));
         strcpy(value, strstrip(value));
         /*
          * sscanf cannot handle '' or "" as empty values
@@ -639,7 +636,6 @@ static line_status iniparser_line(
          * key=#
          */
         strcpy(key, strstrip(key));
-        strcpy(key, strlwc(key));
         value[0]=0 ;
         sta = LINE_VALUE ;
     } else {
